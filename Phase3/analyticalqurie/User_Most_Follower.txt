@@ -1,0 +1,17 @@
+create external table User_Most_Follower (
+Name string,
+User_Screen_name string,
+user_count bigint
+)
+ROW FORMAT serde 'com.bizo.hive.serde.csv.CSVSerde'
+with serdeproperties(
+"separatorChar" = "\,",
+"quoteChar" = "\"")
+stored as textfile
+location "/user/biadmin/PBProject/User_Most_Follower";
+
+insert overwrite table User_Most_Follower
+select ui.user_name,ui.user_screen_name,uci.user_followers_count from cwc_user_table ui JOIN cwc_user_count_table uci 
+ON(ui.user_id=uci.user_id) ORDER BY uci.user_followers_count DESC;
+
+hadoop fs -copyToLocal /user/biadmin/PBProject/User_Most_Follower /home/biadmin/pb/IPL/User_Most_Follower/

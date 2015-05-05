@@ -1,0 +1,20 @@
+
+create external table Twitter_User_Data_table (
+Tweet_Count bigint,
+userid string,
+username string,
+userscreen string
+)
+ROW FORMAT serde 'com.bizo.hive.serde.csv.CSVSerde'
+with serdeproperties(
+"separatorChar" = "\,",
+"quoteChar" = "\"")
+stored as textfile
+location "/user/biadmin/PBProject/TwitterUserContribution"; 
+
+Insert overwrite table Twitter_User_Data_table 
+select count(ti.text), ui.user_id, ui.user_name, ui.user_screen_name From 
+cwc_tweet_table ti JOIN cwc_user_table ui ON (ti.user_id = 
+ui.user_id) GROUP BY ui.user_id, ui.user_name, ui.user_screen_name;
+
+hadoop fs -copyToLocal /user/biadmin/PBProject/TwitterUserContribution /home/biadmin/pb/IPL/TwitterUserContribution/

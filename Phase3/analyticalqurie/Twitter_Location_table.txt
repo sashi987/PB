@@ -1,0 +1,17 @@
+create external table Twitter_Location_table (
+Hour string,
+Tweet_Count bigint
+)
+ROW FORMAT serde 'com.bizo.hive.serde.csv.CSVSerde'
+with serdeproperties(
+"separatorChar" = "\,",
+"quoteChar" = "\"")
+stored as textfile
+location "/user/biadmin/PBProject/TwitterLocation"; 
+
+From which location we got more number of tweets for supporting team.
+
+Insert overwrite table Twitter_Location_table 
+select place_country,count(*) from cwc_tweet_table group by place_country ;
+
+hadoop fs -copyToLocal /user/biadmin/PBProject/TwitterLocation /home/biadmin/pb/IPL/TwitterLocation/

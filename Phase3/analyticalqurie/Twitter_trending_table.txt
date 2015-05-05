@@ -1,0 +1,16 @@
+create external table Twitter_trending_table (
+Hour string,
+Tweet_Count bigint
+)
+ROW FORMAT serde 'com.bizo.hive.serde.csv.CSVSerde'
+with serdeproperties(
+"separatorChar" = "\,",
+"quoteChar" = "\"")
+stored as textfile
+location "/user/biadmin/PBProject/TwitterTrending"; 
+
+Insert overwrite table Twitter_trending_table 
+select  substr(created_at,1,13),count(text)  From cwc_tweet_table GROUP BY substr(created_at,1,13) ;
+
+
+hadoop fs -copyToLocal /user/biadmin/PBProject/TwitterTrending /home/biadmin/pb/IPL/TwitterTrending/
